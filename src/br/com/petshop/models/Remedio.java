@@ -13,6 +13,10 @@ public class Remedio {
         this.preco = preco;
     }
 
+    public Remedio() {
+
+    }
+
     public int getId() {
         return id;
     }

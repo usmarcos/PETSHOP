@@ -44,7 +44,7 @@ public class EsquemaVacinal{
 
     @Override
     public String toString() {
-        return "EsquemaVacinal{" +
+        return "\nEsquemaVacinal{" +
                 "data=" + data +
                 ", vacina=" + vacina +
                 ", observacao='" + observacao + '\'' +
