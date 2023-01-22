@@ -69,17 +69,13 @@ public class Petshop {
 
     public ResponseVO atendimentoClinico(Clientes cliente, List<Animais> animal, String observacao) {
         ResponseVO response = new ResponseVO();
-        int vacina = 2;
         for (Animais a : animal) {
             List<EsquemaVacinal> esquemaVacinal = a.getEsquemaVacinal();
             for (EsquemaVacinal vacinaAnimal : esquemaVacinal) {
                 if (vacinaAnimal.getVacina() == null) {
                     response.setObservacao("O pet " + a.getNome() + " precisa tomar vacina " + Vacinas.VACINA_DOIS);
-                } else {
-                    if (vacina < Vacinas.values().length) {
-                        response.setObservacao("O pet " + a.getNome() + " precisa tomar vacina " + Vacinas.values()[vacina]);
-                        vacina++;
-                    }
+                } else if (vacinaAnimal.getVacina().ordinal() < Vacinas.values().length - 1) {
+                    response.setObservacao("O pet " + a.getNome() + " precisa tomar vacina " + Vacinas.values()[vacinaAnimal.getVacina().ordinal() + 1]);
                 }
                 response.setId(contId++);
                 response.setServico(Servicos.ATENDIMENTO_CLINICO);
@@ -92,7 +88,6 @@ public class Petshop {
         }
         return response;
     }
-
 
     public ResponseVO vacinacao(Clientes cliente, List<Animais> animal, List<Vacinas> vacina, String observacao) {
         ResponseVO response = new ResponseVO();
