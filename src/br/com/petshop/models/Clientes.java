@@ -9,10 +9,17 @@ public class Clientes extends Pessoa{
     public Clientes() {
     }
 
+    public Clientes(int id, String nome, String cpf, String email, String telefone, Endereco endereco, List<Animais> pets ) {
+        super(nome, cpf, email, telefone, endereco);
+        id = this.id;
+        this.pets = pets;
+    }
+
     public Clientes(int id, List<Animais> pets) {
         this.id = id;
         this.pets = pets;
     }
+
 
     public int getId() {
         return id;

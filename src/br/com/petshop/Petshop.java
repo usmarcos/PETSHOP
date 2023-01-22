@@ -27,70 +27,58 @@ public class Petshop {
         ResponseVO response = new ResponseVO();
         switch (higiene) {
             case BANHO:
-                for (int i = 0; i < animal.size(); i++) {
-                    animal.get(i).setEstado(EstadoAnimal.LIMPO);
+                for (Animais animais : animal) {
+                    animais.setEstado(EstadoAnimal.LIMPO);
                     response.setId(contId++);
                     response.setServico(Servicos.HIGIENIZAR);
                     response.setValor(BigDecimal.valueOf(35));
                     response.setCliente(cliente);
-                    response.setObservacao("O pet " + animal.get(i).getNome() + " tomou banho.");
+                    response.setObservacao("O pet " + animais.getNome() + " tomou banho.");
+                    responseList.add(response);
                 }
                 break;
             case TOSA:
-                for (int i = 0; i < animal.size(); i++) {
-                    animal.get(i).setEstado(EstadoAnimal.TOSADO);
+                for (Animais a : animal) {
+                    a.setEstado(EstadoAnimal.TOSADO);
                     response.setId(contId++);
                     response.setServico(Servicos.HIGIENIZAR);
                     response.setValor(BigDecimal.valueOf(65));
                     response.setCliente(cliente);
-                    response.setObservacao("O pet " + animal.get(i).getNome() + " foi tosado.");
+                    response.setObservacao("O pet " + a.getNome() + " foi tosado.");
+                    responseList.add(response);
                 }
+                break;
             case BANHO_TOSA:
-                for (int i = 0; i < animal.size(); i++) {
-                    animal.get(i).setEstado(EstadoAnimal.LIMPO_E_TOSADO);
+                for (Animais a : animal) {
+                    a.setEstado(EstadoAnimal.LIMPO_E_TOSADO);
                     response.setId(contId++);
                     response.setServico(Servicos.HIGIENIZAR);
                     response.setValor(BigDecimal.valueOf(100));
                     response.setCliente(cliente);
-                    response.setObservacao("O pet " + animal.get(i).getNome() + " tomou banho e foi tosado.");
+                    response.setObservacao("O pet " + a.getNome() + " tomou banho e foi tosado.");
+                    responseList.add(response);
                 }
+                break;
             default:
                 response.setObservacao("Solicitação inválida");
+                responseList.add(response);
         }
         System.out.println(response.getObservacao());
-        //adiciona o objeto gerado para uma lista, para que não se perca (como se fosse o banco de dados).
-        responseList.add(response);
         return response;
     }
 
     public ResponseVO atendimentoClinico(Clientes cliente, List<Animais> animal, String observacao) {
-        ResponseVO response = null;
-        //apenas para tomar as demais vacinas e retornar as observações como solicitado
+        ResponseVO response = new ResponseVO();
         int vacina = 2;
-        //primeiro eu varro os pets e depois eu varro o esquema vacinal de cada pet
-        for (int i = 0; i < cliente.getPets().size(); i++) {
-            for (int j = 0; j < animal.get(i).getEsquemaVacinal().size(); j++) {
-                response = new ResponseVO();
-                if (animal.get(i).getEsquemaVacinal().get(j).getVacina() == null) {
-                    response.setObservacao("O pet " + animal.get(i).getNome() + " precisa tomar vacina " + Vacinas.VACINA_DOIS);
+        for (Animais a : animal) {
+            List<EsquemaVacinal> esquemaVacinal = a.getEsquemaVacinal();
+            for (EsquemaVacinal vacinaAnimal : esquemaVacinal) {
+                if (vacinaAnimal.getVacina() == null) {
+                    response.setObservacao("O pet " + a.getNome() + " precisa tomar vacina " + Vacinas.VACINA_DOIS);
                 } else {
-                    vacina = vacina++;
-                    switch (vacina) {
-                        case 0:
-                            response.setObservacao("O pet " + animal.get(i).getNome() + " precisa tomar vacina " + Vacinas.VACINA_UM);
-                            break;
-                        case 1:
-                            response.setObservacao("O pet " + animal.get(i).getNome() + " precisa tomar vacina " + Vacinas.VACINA_DOIS);
-                            break;
-                        case 2:
-                            response.setObservacao("O pet " + animal.get(i).getNome() + " precisa tomar vacina " + Vacinas.VACINA_TRES);
-                            break;
-                        case 3:
-                            response.setObservacao("O pet " + animal.get(i).getNome() + " precisa tomar vacina " + Vacinas.VACINA_QUATRO);
-                            break;
-                        case 4:
-                            response.setObservacao("O pet " + animal.get(i).getNome() + " precisa tomar vacina " + Vacinas.VACINA_CINCO);
-                            break;
+                    if (vacina < Vacinas.values().length) {
+                        response.setObservacao("O pet " + a.getNome() + " precisa tomar vacina " + Vacinas.values()[vacina]);
+                        vacina++;
                     }
                 }
                 response.setId(contId++);
@@ -105,43 +93,25 @@ public class Petshop {
         return response;
     }
 
-    public ResponseVO vacinacao(Clientes cliente, List<Animais> animal, List<Vacinas> vacina, String
-            observacao) {
-        ResponseVO response = null;
 
+    public ResponseVO vacinacao(Clientes cliente, List<Animais> animal, List<Vacinas> vacina, String observacao) {
+        ResponseVO response = new ResponseVO();
         for (int i = 0; i < animal.size(); i++) {
-            for (int j = 0; j < animal.get(i).getEsquemaVacinal().size(); j++) {
-                if (animal.get(i).getEsquemaVacinal().get(j).getVacina() == null) {
-                    animal.get(i).getEsquemaVacinal().remove(i);
-                    response = new ResponseVO();
-                    animal.get(i).getEsquemaVacinal().add(new EsquemaVacinal(LocalDate.now(), vacina.get(i), "O animal tomou a " + vacina.get(i) + " conforme orientação médica"));
-                    response.setId(contId++);
-                    response.setServico(Servicos.VACINACAO);
-                    response.setValor(BigDecimal.valueOf(150));
-                    response.setCliente(cliente);
-                    response.setObservacao("O pet " + animal.get(i).getNome() + " tomou a " + vacina.get(i) + " conforme orientação médica");
-                    //adiciona o objeto gerado para uma lista, para que não se perca (como se fosse o banco de dados).
-                    responseList.add(response);
-
-                } else if (animal.get(i).getEsquemaVacinal().get(j).getVacina() != null) {
-                    response = new ResponseVO();
-                    animal.get(i).getEsquemaVacinal().add(new EsquemaVacinal(LocalDate.now(), vacina.get(i), "O animal tomou a " + vacina.get(i) + " conforme orientação médica"));
-                    response.setId(contId++);
-                    response.setServico(Servicos.VACINACAO);
-                    response.setValor(BigDecimal.valueOf(150));
-                    response.setCliente(cliente);
-                    response.setObservacao("O pet " + animal.get(i).getNome() + " tomou a " + vacina.get(i) + " conforme orientação médica");
-                    //adiciona o objeto gerado para uma lista, para que não se perca (como se fosse o banco de dados).
-                    responseList.add(response);
-                    break;
-                }
-            }
+            List<EsquemaVacinal> novoEsquemaVacinal = new ArrayList<>(animal.get(i).getEsquemaVacinal());
+            novoEsquemaVacinal.add(new EsquemaVacinal(LocalDate.now(), vacina.get(i), "O animal tomou a " + vacina.get(i) + " conforme orientação médica"));
+            animal.get(i).setEsquemaVacinal(novoEsquemaVacinal);
+            // animal.get(i).getEsquemaVacinal().add(new EsquemaVacinal(LocalDate.now(), vacina.get(i), "O animal tomou a " + vacina.get(i) + " conforme orientação médica"));
+            response.setId(contId++);
+            response.setServico(Servicos.VACINACAO);
+            response.setValor(BigDecimal.valueOf(150));
+            response.setCliente(cliente);
+            response.setObservacao("O pet " + animal.get(i).getNome() + " tomou a " + vacina.get(i) + " conforme orientação médica");
+            responseList.add(response);
         }
         return response;
     }
 
     public static List<Remedio> criarListaRemedios() {
-        Remedio remedio = new Remedio();
         Remedio remedio1 = new Remedio(1, "Zoetis Apoquel Tratamento Dermatológico para Cães", BigDecimal.valueOf(209.90));
         Remedio remedio2 = new Remedio(2, "Nexgard Spectra De 7,6 A 15Kg Antipulgas E Carrapatos Para Cães", BigDecimal.valueOf(100.90));
         Remedio remedio3 = new Remedio(3, "Vermífugo Milbemax C - De 5kg a 25 kg", BigDecimal.valueOf(47.12));
@@ -179,12 +149,12 @@ public class Petshop {
             quantServicos = itens.size() - 2;
             remedio = itens.get(2);
             alimento = itens.get(3);
-        } else if (itens.size() == 7) {
+        } else if (itens.size() == 8) {
             quantServicos = itens.size() - 4;
-            remedio = itens.get(3);
-            remedio2 = itens.get(4);
-            alimento = itens.get(5);
-            alimento2 = itens.get(6);
+            remedio = itens.get(4);
+            remedio2 = itens.get(5);
+            alimento = itens.get(6);
+            alimento2 = itens.get(7);
 
         }
         //imprimindo a nota
@@ -215,4 +185,5 @@ public class Petshop {
         contId = 1;
         responseList.clear();
     }
+
 }

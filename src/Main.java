@@ -6,6 +6,7 @@ import br.com.petshop.vo.ResponseVO;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Main {
@@ -24,48 +25,38 @@ public class Main {
         /**Crie no mínimo dois cliente, com pelo menos um deles tendo mais do que um pet*/
         System.out.println("Crie no mínimo dois cliente, com pelo menos um deles tendo mais do que um pet");
         //Novo cliente
-        Clientes clienteUm = new Clientes();
-        clienteUm.setId(1);
-        clienteUm.setNome("Juvenal");
-        clienteUm.setCpf("119.115.235-58");
-        clienteUm.setEmail("juvenal@teste.com");
-        clienteUm.setTelefone("21-978485658");
-        clienteUm.setEndereco(new Endereco("Avenida do Contorno", "Centro", "Apto 18", "36.600-000", "Bicas", "MG", "Nada", 15));
-        //Novo pet
-        List<Animais> petClienteUm = new ArrayList<Animais>();
-        List<EsquemaVacinal> vacinaClienteUm = new ArrayList<EsquemaVacinal>();
+        Endereco enderecoClienteUm = new Endereco("Rua das Flores", "Jardim América", "Casa 3", "22222-111", "Rio de Janeiro", "RJ", "Perto do parque", 123);
+        List<EsquemaVacinal> vacinasClienteUm = Arrays.asList(
+                new EsquemaVacinal(null, null, "Nada")
+        );
+        List<Animais> petsClienteUm = Arrays.asList(
+                new Gato("Jojo", "Siamês", LocalDate.parse("2015-12-01"), Porte.PEQUENO, 8.5, EstadoAnimal.LIMPO, vacinasClienteUm)
+        );
+        Clientes clienteUm = new Clientes(1, "Juvenal", "119.115.235-58", "juvenal@teste.com", "21-978485658", enderecoClienteUm, petsClienteUm);
 
-        vacinaClienteUm.add(new EsquemaVacinal(null, null, "Nada"));
-        petClienteUm.add(new Gato("Jojo", "Siamês", LocalDate.parse("2015-12-01"), Porte.PEQUENO, 8.5, EstadoAnimal.LIMPO, vacinaClienteUm));
-        clienteUm.setPets(petClienteUm);
-
+        clienteUm.setPets(petsClienteUm);
         System.out.println("Criado o cliente 1: ");
-
         System.out.println(clienteUm);
 
         //Cliente dois com dois pets
-        Clientes clienteDois = new Clientes();
-        clienteDois.setId(2);
-        clienteUm.setNome("Joana");
-        clienteUm.setCpf("003.180.584-54");
-        clienteUm.setEmail("joana@teste.com");
-        clienteUm.setTelefone("21-32713582");
-        clienteUm.setEndereco(new Endereco("Rua Pedro Gomes", "Aratuba", "Apto 180", "26.600-000", "Paracambi", "RJ", "Próximo ao mercado", 1855));
+        Endereco enderecoClienteDois = new Endereco("Rua Pedro Gomes", "Aratuba", "Apto 180", "26.600-000", "Paracambi", "RJ", "Próximo ao mercado", 1855);
 
-        List<Animais> petsClienteDois = new ArrayList<Animais>();
-        List<EsquemaVacinal> vacinasClienteDoisPetUm = new ArrayList<EsquemaVacinal>();
-        List<EsquemaVacinal> vacinasClienteDoisPetDois = new ArrayList<EsquemaVacinal>();
-
-        vacinasClienteDoisPetUm.add(new EsquemaVacinal(LocalDate.parse("2019-10-01"), Vacinas.VACINA_UM, "Dermatite Alérgica à Picada de Ectoparasitos"));
-        petsClienteDois.add(new Cachorro("Laranja", "Dogue alemão", LocalDate.parse("2010-11-10"), Porte.GRANDE, 15.9, EstadoAnimal.SUJO, vacinasClienteDoisPetUm));
-        vacinasClienteDoisPetDois.add(new EsquemaVacinal(LocalDate.parse("2018-01-02"), Vacinas.VACINA_DOIS, "Hipersensibilidade Alimentar"));
-        petsClienteDois.add(new Cachorro("Pipoca", "Golden retriever", LocalDate.parse("2009-05-15"), Porte.MEDIO, 12.1, EstadoAnimal.LIMPO_E_TOSADO, vacinasClienteDoisPetDois));
-        clienteDois.setPets(petsClienteDois);
+        List<EsquemaVacinal> vacinasClienteDoisPetUm = Arrays.asList(
+                new EsquemaVacinal(LocalDate.parse("2019-10-01"), Vacinas.VACINA_UM, "Dermatite Alérgica à Picada de Ectoparasitos")
+        );
+        List<EsquemaVacinal> vacinasClienteDoisPetDois = Arrays.asList(
+                new EsquemaVacinal(LocalDate.parse("2018-01-02"), Vacinas.VACINA_DOIS, "Hipersensibilidade Alimentar")
+        );
+        List<Animais> petsClienteDois = Arrays.asList(
+                new Cachorro("Laranja", "Dogue alemão", LocalDate.parse("2010-11-10"), Porte.GRANDE, 15.9, EstadoAnimal.SUJO, vacinasClienteDoisPetUm),
+                new Cachorro("Pipoca", "Golden retriever", LocalDate.parse("2009-05-15"), Porte.MEDIO, 12.1, EstadoAnimal.LIMPO_E_TOSADO, vacinasClienteDoisPetDois)
+        );
+        Clientes clienteDois = new Clientes(2, "Joana", "003.180.584-54", "joana@teste.com", "21-32713582", enderecoClienteDois, petsClienteDois);
 
         System.out.println("\nCriado o cliente 2: ");
         System.out.println(clienteDois);
 
-        validacoesClienteUm(petshop, clienteUm, petClienteUm);
+        validacoesClienteUm(petshop, clienteUm, petsClienteUm);
         validacoesClienteDois(petshop, clienteDois, petsClienteDois);
 
     }
@@ -95,7 +86,7 @@ public class Main {
         vacinasSolicitadas.add(Vacinas.VACINA_DOIS);
         response = petshop.vacinacao(clienteUm, petClienteUm, vacinasSolicitadas, "Nada");
         notaServico.add(response.getId());
-        System.out.println("Novo esquema vacinal completo: "+ petClienteUm.get(0).getEsquemaVacinal());
+        System.out.println("Novo esquema vacinal completo: " + petClienteUm.get(0).getEsquemaVacinal());
 
         /**Valide se o retorno do método vacinação possui o esquemaVacinal do pet preenchido com o vacina que foi pedida, o id, o serviço prestado e o valor*/
         System.out.println("\nValide se o retorno do método vacinação possui o esquemaVacinal do pet preenchido com o vacina que foi pedida, o id, o serviço prestado e o valor");
@@ -149,6 +140,7 @@ public class Main {
         List<Integer> notaServico = new ArrayList<Integer>();
         response = petshop.atendimentoClinico(clienteDois, petClienteDois, "Nada");
         notaServico.add(response.getId());
+        notaServico.add(response.getId() - 1);
         if (response.getId() != 0 && response.getServico() == Servicos.ATENDIMENTO_CLINICO && response.getValor() != null) {
             System.out.println("O retorno está correto: possui o id do serviço, o serviço prestado, o valor e há no campo observação o pedido do médico para a vacina");
         } else {
@@ -161,19 +153,19 @@ public class Main {
         vacinasSolicitadas.add(Vacinas.VACINA_TRES);
         vacinasSolicitadas.add(Vacinas.VACINA_QUATRO);
         response = petshop.vacinacao(clienteDois, petClienteDois, vacinasSolicitadas, "Nada");
-        if(petClienteDois.get(0).getEsquemaVacinal().get(1).getObservacao().contains("VACINA_TRES")){
-            System.out.println("O pet tomou a vacina esperada, "+Vacinas.VACINA_TRES);
-            System.out.println("Novo esquema vacinal completo: "+ petClienteDois.get(0).getEsquemaVacinal());
-        }else {
+        if (petClienteDois.get(0).getEsquemaVacinal().get(1).getObservacao().contains("VACINA_TRES")) {
+            System.out.println("O pet tomou a vacina esperada, " + Vacinas.VACINA_TRES);
+            System.out.println("Novo esquema vacinal completo: " + petClienteDois.get(0).getEsquemaVacinal());
+        } else {
             System.out.println("O pet não tomou a vacina correta.");
         }
-        if(petClienteDois.get(1).getEsquemaVacinal().get(1).getObservacao().contains("VACINA_QUATRO")) {
-            System.out.println("O pet tomou a vacina esperada, "+Vacinas.VACINA_QUATRO);
+        if (petClienteDois.get(1).getEsquemaVacinal().get(1).getObservacao().contains("VACINA_QUATRO")) {
+            System.out.println("O pet tomou a vacina esperada, " + Vacinas.VACINA_QUATRO);
             System.out.println("Novo esquema vacinal completo: " + petClienteDois.get(1).getEsquemaVacinal());
-        }else {
+        } else {
             System.out.println("O pet não tomou a vacina correta.");
         }
-        notaServico.add(response.getId()-1);
+        notaServico.add(response.getId() - 1);
         notaServico.add(response.getId());
 
         /**Chame os métodos verRemedio e verAlimentos*/
