@@ -1,4 +1,5 @@
 # PETSHOP
+<h2>Sistema criado para simular o funcionamento de um petshop, com os dados sendo inseridos hard code.</h2>
 <p>Petshop 947  
 
 <p>Registros:
